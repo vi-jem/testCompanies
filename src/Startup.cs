@@ -22,7 +22,13 @@ namespace myrestful
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DBContextEmployees>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultDB")));
+            string connectionString = Configuration.GetConnectionString("DefaultDB");
+            if(connectionString == null)
+            {
+                connectionString = @"Server=localhost;Database=myrestful;Username=learning;Password=qaz";
+            }
+
+            services.AddDbContext<DBContextEmployees>(options => options.UseNpgsql(connectionString));
             services.AddScoped<ICompanyService, CompanyService>();
             services.AddScoped<ICompanyRepository, CompanyRepository>();
 
@@ -37,6 +43,10 @@ namespace myrestful
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseExceptionHandler(new ExceptionHandlerOptions{
+                ExceptionHandler = new JsonExceptionMiddleware().Invoke
+            });
 
             app.UseMiddleware<BasicAuthMiddleware>();
             app.UseMvc();

@@ -17,6 +17,11 @@ namespace myrestful.Services
 
         public async Task<IEntity> Create(Company newCompany)
         {
+            if(newCompany.Employees == null)
+            {
+                newCompany.Employees = new List<Employee>();
+            }
+
             return await _companyRepo.Create(newCompany);
         }
 
@@ -33,11 +38,6 @@ namespace myrestful.Services
             }
 
             return await _companyRepo.Filter(parameters);
-        }
-
-        public async Task<IEnumerable<IEntity>> GetAll()
-        {
-            return await _companyRepo.GetAll();
         }
 
         public async Task<IEntity> GetById(int id)

@@ -6,7 +6,6 @@ namespace myrestful.Repositories
 {
     public interface ICompanyRepository
     {
-        Task<IEnumerable<IEntity>> GetAll();
         Task<IEntity> GetById(int id);
         Task<IEntity> Create(Company newCompany);
         Task<SearchResult> Filter(SearchQuery parameters);

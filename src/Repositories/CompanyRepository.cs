@@ -70,18 +70,12 @@ namespace myrestful.Repositories
             return new SearchResult { Results = list};
         }
 
-        public async Task<IEnumerable<IEntity>> GetAll()
-        {
-            return await _context.Companies
-                .Include(item => item.Employees)
-                .ToListAsync();
-        }
-
         public async Task<IEntity> GetById(int id)
         {
-            return await _context.Companies
+            Company company = await _context.Companies
                 .Include(item => item.Employees)
                 .SingleOrDefaultAsync(item => item.ID == id);
+            return company;
         }
 
         public async Task<bool> Update(int id, Company newValues)

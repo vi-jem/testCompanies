@@ -6,7 +6,6 @@ namespace myrestful.Services
 {
     public interface ICompanyService
     {
-        Task<IEnumerable<IEntity>> GetAll();
         Task<IEntity> GetById(int id);
         Task<IEntity> Create(Company newCompany);
         Task<SearchResult> Filter(SearchQuery parameters);

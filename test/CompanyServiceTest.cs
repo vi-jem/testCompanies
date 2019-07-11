@@ -1,25 +1,54 @@
-﻿using System;
-using Xunit;
+﻿using Xunit;
 using myrestful.Models;
+using myrestful.Repositories;
+using Moq;
+using myrestful.Services;
+using System.Threading.Tasks;
 
 namespace myrestful.tests
 {
     public class CompanyServiceTest
     {
-        [Fact]
-        public void PassingTest()
+        private readonly ICompanyService _service;
+
+        private readonly Company aCompany;
+        private readonly Company aCompanyWithoutData;
+        private readonly SearchQuery searchQuery;
+
+        public CompanyServiceTest()
         {
-        //Given
-        Company a = new Company();
-        //When
-        
-        //Then
-        Assert.Equal(4, Add(2,2));
+            aCompany = new Company{Name = "aaa", EstablishmentYear = 111};
+            aCompanyWithoutData = new Company();
+            searchQuery = new SearchQuery();
+
+            var mockRepo = new Mock<ICompanyRepository>();
+            mockRepo.Setup(repo => repo.GetById(1))
+                .ReturnsAsync(new Company{ID = 1, Name = "zzz", EstablishmentYear = 2011});
+            
+            mockRepo.Setup(repo => repo.GetById(2))
+                .ReturnsAsync(default(IEntity));
+
+            mockRepo.Setup(repo => repo.Create(aCompany))
+                .ReturnsAsync(new Entity{ID = 3});
+
+            mockRepo.Setup(repo => repo.Create(aCompanyWithoutData))
+                .ReturnsAsync(default(IEntity));                
+
+            _service = new CompanyService(mockRepo.Object);
         }
 
-        int Add(int x, int y)
+        [Fact]
+        public async Task GetCompany_success()
         {
-            return x+y;
+            IEntity company = await _service.GetById(1);
+            Assert.NotNull(company);
+        }
+
+        [Fact]
+        public async Task GetCompany_non_existing()
+        {
+            IEntity company = await _service.GetById(2);
+            Assert.Null(company);
         }
     }
 }

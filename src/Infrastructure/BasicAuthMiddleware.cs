@@ -16,6 +16,12 @@ namespace myrestful.Infrastructure
 
         public async Task Invoke(HttpContext context)
         {
+            string path = context.Request?.Path;
+            if(path.Contains("search", StringComparison.InvariantCultureIgnoreCase))
+            {
+                await _next.Invoke(context);
+            }
+
             string authHeader = context.Request.Headers["Authorization"];
             if (authHeader != null && authHeader.StartsWith("Basic"))
             {
