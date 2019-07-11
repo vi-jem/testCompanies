@@ -6,7 +6,7 @@ I developed this on Ubuntu, not sure whether that was a smart decision, wanted t
 
 For simplicity I choose **PostgreSQL** database and **Entity Framework**, even though NHibernate and Fluent were mentioned. I'm not familiar with those ORMs, and there were already too many moving parts (VSCode, extensions, and .NET core 2.2).
 
-I haven't include SQL script, but this should be covered by EF Migrations added to the project.
+I haven't included SQL script, but this should be covered by EF Migrations added to the project.
 
 I'll gladly include NHibernate repository as well at some point - if sending updated code in few days is agreeable with you.
 
@@ -21,7 +21,5 @@ DELETE: /company/delete/{id}
 
 ## endpoints not covered by specification
 I've decided to leave them in project to help with manual testing
-
-GET /company
 
 GET /company/{id}

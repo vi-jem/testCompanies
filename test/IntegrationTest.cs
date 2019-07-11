@@ -35,30 +35,52 @@ namespace myrestful.tests
         }
 
         [Fact]
-        public async Task CreateAndGetCompany()
+        public async Task CreateGetSearchUpdateDelete()
         {
+            //create company
             Company companyToCreate = new Company{Name = "zzz", EstablishmentYear = 1212};
-            var createContent = new StringContent(JsonConvert.SerializeObject(companyToCreate), Encoding.UTF8, "application/json");
+            HttpContent createContent = new StringContent(JsonConvert.SerializeObject(companyToCreate), Encoding.UTF8, "application/json");
             HttpResponseMessage createResponse = await _client.PostAsync($"/company/create", createContent);
+            string jsonResponse = await createResponse.Content.ReadAsStringAsync();
+            long id = JsonConvert.DeserializeObject<Entity>(jsonResponse).ID;
 
-            var newId = JsonConvert.DeserializeObject<Entity>(await createResponse.Content.ReadAsStringAsync());
-
-            long id = newId.ID;
-
-            var response = await _client.GetAsync($"/company/{id}");
+            //get company by id
+            HttpResponseMessage response = await _client.GetAsync($"/company/{id}");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            var valueResponse = JsonConvert.DeserializeObject<Company>(jsonResponse);
+
+            jsonResponse = await response.Content.ReadAsStringAsync();
+            Company valueResponse = JsonConvert.DeserializeObject<Company>(jsonResponse);
 
             Assert.Equal(id, valueResponse.ID);
-        }
 
-        [Fact]
-        public async Task SearchUpdateAndDeleteCompany()
-        {
-            SearchQuery query = new SearchQuery{Keyword = "zzz"};
-            
+            //search company
+            SearchQuery searchQuery = new SearchQuery{Keyword = "zzz"};
+            HttpContent searchContent = new StringContent(JsonConvert.SerializeObject(searchQuery), Encoding.UTF8, "application/json");
+            HttpResponseMessage searchResponse = await _client.PostAsync($"/company/search", searchContent);
+            jsonResponse = await searchResponse.Content.ReadAsStringAsync();
+            SearchResult resultResponse = JsonConvert.DeserializeObject<SearchResult>(jsonResponse);
+            Assert.NotEmpty(resultResponse.Results);
 
+            //update company
+            companyToCreate.Name = "aaa";
+            companyToCreate.ID = id;
+            HttpContent updateContent = new StringContent(JsonConvert.SerializeObject(companyToCreate), Encoding.UTF8, "application/json");
+            HttpResponseMessage updateResponse = await _client.PutAsync($"/company/update/{id}", updateContent);
+            Assert.Equal(HttpStatusCode.OK, updateResponse.StatusCode);
+
+            //get company and verify namechange
+            HttpResponseMessage getResponse = await _client.GetAsync($"/company/{id}");
+            jsonResponse = await getResponse.Content.ReadAsStringAsync();
+            valueResponse = JsonConvert.DeserializeObject<Company>(jsonResponse);
+            Assert.Equal(companyToCreate.Name, valueResponse.Name);
+
+            //delete company
+            HttpResponseMessage deleteResponse = await _client.DeleteAsync($"/company/delete/{id}");
+            Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+
+            //get company
+            getResponse = await _client.GetAsync($"/company/{id}");
+            Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
         }
     }
 }

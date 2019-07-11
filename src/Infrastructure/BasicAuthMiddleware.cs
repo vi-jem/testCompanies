@@ -21,30 +21,32 @@ namespace myrestful.Infrastructure
             {
                 await _next.Invoke(context);
             }
-
-            string authHeader = context.Request.Headers["Authorization"];
-            if (authHeader != null && authHeader.StartsWith("Basic"))
+            else
             {
-                string encodedUsernamePassword = authHeader.Split(' ')[1];
-                string[] usernamePassword = Encoding.UTF8.GetString(Convert.FromBase64String(encodedUsernamePassword)).Split(':');
-                var username = usernamePassword[0];
-                var password = usernamePassword[1];
-
-                if (username == "aladdin" && password == "opensesame")
+                string authHeader = context.Request.Headers["Authorization"];
+                if (authHeader != null && authHeader.StartsWith("Basic"))
                 {
-                    await _next.Invoke(context);
+                    string encodedUsernamePassword = authHeader.Split(' ')[1];
+                    string[] usernamePassword = Encoding.UTF8.GetString(Convert.FromBase64String(encodedUsernamePassword)).Split(':');
+                    var username = usernamePassword[0];
+                    var password = usernamePassword[1];
+
+                    if (username == "aladdin" && password == "opensesame")
+                    {
+                        await _next.Invoke(context);
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = 401;
+                        return;
+                    }
                 }
                 else
+                // no authorization header
                 {
                     context.Response.StatusCode = 401;
                     return;
                 }
-            }
-            else
-            // no authorization header
-            {
-                context.Response.StatusCode = 401;
-                return;
             }
         }
     }
