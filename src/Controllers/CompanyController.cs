@@ -35,8 +35,8 @@ namespace myrestful.Controllers
         public async Task<ActionResult> Create(Company newCompany)
         {
             IEntity created = await _service.Create(newCompany);
-            var uri = Url.Action("Get", created.ID) ?? $"/company/{created.ID}";
-            return Created(uri, created);
+            string path = Url.Action("Get", created.ID) ?? $"/company/{created.ID}";
+            return Created(path, created);
         }
 
         // POST /company/search

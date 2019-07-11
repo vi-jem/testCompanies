@@ -19,16 +19,16 @@ namespace myrestful.tests
         private readonly DBContextEmployees _context;
         public IntegrationTest()
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                                     .SetBasePath(Path.GetFullPath(@"../../../../src/"))
                                     .Build();
             
 
-            var builder = new WebHostBuilder()
+            IWebHostBuilder builder = new WebHostBuilder()
                             .UseEnvironment("Debug")
                             .UseStartup<Startup>()
                             .UseConfiguration(configuration);
-            var server = new TestServer(builder);
+            TestServer server = new TestServer(builder);
             this._context = server.Host.Services.GetService(typeof(DBContextEmployees)) as DBContextEmployees;
             this._client = server.CreateClient();
             _client.DefaultRequestHeaders.Add("Authorization", "Basic YWxhZGRpbjpvcGVuc2VzYW1l");

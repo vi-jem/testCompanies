@@ -66,7 +66,7 @@ namespace myrestful.Repositories
                         item.Employees.Any(employee =>
                             parameters.EmployeeJobTitles.Contains(employee.JobTitle)));
             }
-            var list = await result.Include(item => item.Employees).ToListAsync();
+            List<Company> list = await result.Include(item => item.Employees).ToListAsync();
             return new SearchResult { Results = list};
         }
 

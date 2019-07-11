@@ -21,7 +21,7 @@ namespace myrestful.tests
             aCompanyWithoutData = new Company();
             searchQuery = new SearchQuery();
 
-            var mockRepo = new Mock<ICompanyRepository>();
+            Mock<ICompanyRepository> mockRepo = new Mock<ICompanyRepository>();
             mockRepo.Setup(repo => repo.GetById(1))
                 .ReturnsAsync(new Company{ID = 1, Name = "zzz", EstablishmentYear = 2011});
             
@@ -50,5 +50,7 @@ namespace myrestful.tests
             IEntity company = await _service.GetById(2);
             Assert.Null(company);
         }
+
+        //TODO: add more tests if services become more complex
     }
 }

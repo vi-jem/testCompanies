@@ -28,8 +28,8 @@ namespace myrestful.Infrastructure
                 {
                     string encodedUsernamePassword = authHeader.Split(' ')[1];
                     string[] usernamePassword = Encoding.UTF8.GetString(Convert.FromBase64String(encodedUsernamePassword)).Split(':');
-                    var username = usernamePassword[0];
-                    var password = usernamePassword[1];
+                    string username = usernamePassword[0];
+                    string password = usernamePassword[1];
 
                     if (username == "aladdin" && password == "opensesame")
                     {
